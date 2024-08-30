@@ -15,10 +15,15 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
+#include "absl/log/check.h"
 
-#include "examples/protos/helloworld.grpc.pb.h"
+#include "helloworld.grpc.pb.h"
 
 #include <grpcpp/grpcpp.h>
+
+ABSL_FLAG(std::string, target, "unix:/run/user/1000/memsocket-client.sock", "Socket path");
 
 using grpc::Channel;
 using grpc::ClientContext;
@@ -51,7 +56,11 @@ class GreeterClient {
 };
 
 int main(int argc, char** argv) {
-  std::string target_str("unix-abstract:grpc%00abstract");
+  absl::ParseCommandLine(argc, argv);
+  // Instantiate the client. It requires a channel, out of which the actual RPCs
+  // are created. This channel models a connection to an endpoint specified by
+  // the argument "--target=" which is the only expected argument.
+  std::string target_str = absl::GetFlag(FLAGS_target);
   GreeterClient greeter(
       grpc::CreateChannel(target_str, grpc::InsecureChannelCredentials()));
   std::string user("arst");

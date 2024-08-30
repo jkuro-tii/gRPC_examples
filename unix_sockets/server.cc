@@ -15,12 +15,18 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
+#include "absl/log/check.h"
 
-#include "examples/protos/helloworld.grpc.pb.h"
+
+#include "helloworld.grpc.pb.h"
 
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/health_check_service_interface.h>
+
+ABSL_FLAG(std::string, target, "unix:/run/user/1000/memsocket-server.sock", "Socket path");
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -40,8 +46,7 @@ class GreeterServiceImpl final : public Greeter::Service {
   }
 };
 
-void RunServer() {
-  std::string server_address("unix-abstract:grpc%00abstract");
+void RunServer(std::string server_address) {
   GreeterServiceImpl service;
   grpc::EnableDefaultHealthCheckService(true);
   grpc::reflection::InitProtoReflectionServerBuilderPlugin();
@@ -54,7 +59,12 @@ void RunServer() {
 }
 
 int main(int argc, char** argv) {
-  RunServer();
+  absl::ParseCommandLine(argc, argv);
+  // Instantiate the client. It requires a channel, out of which the actual RPCs
+  // are created. This channel models a connection to an endpoint specified by
+  // the argument "--target=" which is the only expected argument.
+  std::string target_str = absl::GetFlag(FLAGS_target);
+  RunServer(target_str);
 
   return 0;
 }
