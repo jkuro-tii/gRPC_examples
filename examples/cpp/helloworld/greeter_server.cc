@@ -42,7 +42,7 @@ using helloworld::Greeter;
 using helloworld::HelloReply;
 using helloworld::HelloRequest;
 
-ABSL_FLAG(uint16_t, port, 50051, "Server port for the service");
+ABSL_FLAG(std::string, target, "unix:/run/user/1000/memsocket-client.sock", "Socket path");
 
 // Logic and data behind the server's behavior.
 class GreeterServiceImpl final : public Greeter::Service {
@@ -54,8 +54,7 @@ class GreeterServiceImpl final : public Greeter::Service {
   }
 };
 
-void RunServer(uint16_t port) {
-  std::string server_address = absl::StrFormat("0.0.0.0:%d", port);
+void RunServer(std::string server_address) {
   GreeterServiceImpl service;
 
   grpc::EnableDefaultHealthCheckService(true);
@@ -77,6 +76,6 @@ void RunServer(uint16_t port) {
 
 int main(int argc, char** argv) {
   absl::ParseCommandLine(argc, argv);
-  RunServer(absl::GetFlag(FLAGS_port));
+  RunServer(absl::GetFlag(FLAGS_target));
   return 0;
 }

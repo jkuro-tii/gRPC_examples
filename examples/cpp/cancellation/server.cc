@@ -29,7 +29,7 @@
 #include "helloworld.grpc.pb.h"
 #endif
 
-ABSL_FLAG(uint16_t, port, 50051, "Server port for the service");
+ABSL_FLAG(std::string, target, "unix:/run/user/1000/memsocket-client.sock", "Socket path");
 
 using grpc::CallbackServerContext;
 using grpc::Server;
@@ -78,8 +78,7 @@ class KeyValueStoreServiceImpl final : public Greeter::CallbackService {
   }
 };
 
-void RunServer(uint16_t port) {
-  std::string server_address = absl::StrFormat("0.0.0.0:%d", port);
+void RunServer(std::string server_address) {
   KeyValueStoreServiceImpl service;
 
   ServerBuilder builder;
@@ -99,6 +98,7 @@ void RunServer(uint16_t port) {
 
 int main(int argc, char** argv) {
   absl::ParseCommandLine(argc, argv);
-  RunServer(absl::GetFlag(FLAGS_port));
+  std::string target_str = absl::GetFlag(FLAGS_target);
+  RunServer(target_str);
   return 0;
 }

@@ -33,7 +33,7 @@
 #include "helloworld.grpc.pb.h"
 #endif
 
-ABSL_FLAG(uint16_t, port, 50051, "Server port for the service");
+ABSL_FLAG(std::string, target, "unix:/run/user/1000/memsocket-client.sock", "Socket path");
 
 using grpc::CallbackServerContext;
 using grpc::Channel;
@@ -104,8 +104,8 @@ class GreeterServiceImpl final : public Greeter::CallbackService {
   std::shared_ptr<Channel> self_channel_;
 };
 
-void RunServer(uint16_t port) {
-  std::string server_address = absl::StrFormat("0.0.0.0:%d", port);
+void RunServer(std::string server_address) {
+
   GreeterServiceImpl service(server_address);
 
   ServerBuilder builder;
@@ -125,6 +125,6 @@ void RunServer(uint16_t port) {
 
 int main(int argc, char** argv) {
   absl::ParseCommandLine(argc, argv);
-  RunServer(absl::GetFlag(FLAGS_port));
+  RunServer(absl::GetFlag(FLAGS_target));
   return 0;
 }

@@ -36,7 +36,7 @@ using helloworld::Greeter;
 using helloworld::HelloReply;
 using helloworld::HelloRequest;
 
-constexpr absl::string_view kTargetAddress = "localhost:50052";
+constexpr absl::string_view kTargetAddress = "unix:/run/user/1000/memsocket-server.sock";
 
 // clang-format off
 constexpr absl::string_view kRetryPolicy =

@@ -84,7 +84,7 @@ int main(int argc, char** argv) {
   // Set the default compression algorithm for the channel.
   args.SetCompressionAlgorithm(GRPC_COMPRESS_GZIP);
   GreeterClient greeter(grpc::CreateCustomChannel(
-      "localhost:50051", grpc::InsecureChannelCredentials(), args));
+      "unix:/run/user/1000/memsocket-server.sock", grpc::InsecureChannelCredentials(), args));
   std::string user("world world world world");
   std::string reply = greeter.SayHello(user);
   std::cout << "Greeter received: " << reply << std::endl;

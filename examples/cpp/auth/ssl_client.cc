@@ -34,7 +34,7 @@
 #include "helloworld.grpc.pb.h"
 #endif
 
-ABSL_FLAG(uint16_t, port, 50051, "Server port for the service");
+ABSL_FLAG(std::string, target, "unix:/run/user/1000/memsocket-server.sock", "Socket path");
 
 using grpc::Channel;
 using grpc::ClientContext;
@@ -106,7 +106,7 @@ int main(int argc, char** argv) {
   // are created. This channel models a connection to an endpoint specified by
   // the argument "--target=" which is the only expected argument.
   std::string target_str =
-      absl::StrFormat("localhost:%d", absl::GetFlag(FLAGS_port));
+	  absl::GetFlag(FLAGS_target);
   // Build a SSL options for the channel
   grpc::SslCredentialsOptions ssl_options;
   ssl_options.pem_root_certs = LoadStringFromFile(kRootCertificate);

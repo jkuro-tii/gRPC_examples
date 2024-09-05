@@ -35,7 +35,7 @@
 #include "status.pb.h"
 #endif
 
-ABSL_FLAG(std::string, target, "localhost:50051", "Server address");
+ABSL_FLAG(std::string, target, "unix:/run/user/1000/memsocket-server.sock", "Server address");
 
 using grpc::Channel;
 using grpc::ClientContext;

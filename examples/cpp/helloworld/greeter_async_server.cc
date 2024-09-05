@@ -26,7 +26,6 @@
 #include "absl/log/check.h"
 #include "absl/strings/str_format.h"
 
-#include <grpc/support/log.h>
 #include <grpcpp/grpcpp.h>
 
 #ifdef BAZEL_BUILD
@@ -35,7 +34,7 @@
 #include "helloworld.grpc.pb.h"
 #endif
 
-ABSL_FLAG(uint16_t, port, 50051, "Server port for the service");
+ABSL_FLAG(std::string, target, "unix:/run/user/1000/memsocket-client.sock", "Socket path");
 
 using grpc::Server;
 using grpc::ServerAsyncResponseWriter;
@@ -56,8 +55,7 @@ class ServerImpl final {
   }
 
   // There is no shutdown handling in this code.
-  void Run(uint16_t port) {
-    std::string server_address = absl::StrFormat("0.0.0.0:%d", port);
+  void Run(std::string server_address) {
 
     ServerBuilder builder;
     // Listen on the given address without any authentication mechanism.
@@ -173,7 +171,7 @@ class ServerImpl final {
 int main(int argc, char** argv) {
   absl::ParseCommandLine(argc, argv);
   ServerImpl server;
-  server.Run(absl::GetFlag(FLAGS_port));
+  server.Run(absl::GetFlag(FLAGS_target));
 
   return 0;
 }

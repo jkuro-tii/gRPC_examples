@@ -29,7 +29,7 @@
 #include "helloworld.grpc.pb.h"
 #endif
 
-ABSL_FLAG(uint16_t, port, 50051, "Server port for the service");
+ABSL_FLAG(std::string, target, "unix:/run/user/1000/memsocket-client.sock", "Socket path");
 
 using grpc::CallbackServerContext;
 using grpc::Server;
@@ -63,8 +63,7 @@ constexpr char kServerCertPath[] = "credentials/localhost.crt";
 constexpr char kServerKeyPath[] = "credentials/localhost.key";
 #endif
 
-void RunServer(uint16_t port) {
-  std::string server_address = absl::StrFormat("0.0.0.0:%d", port);
+void RunServer(std::string server_address) {
   GreeterServiceImpl service;
   ServerBuilder builder;
   // Load SSL credentials and build a SSL credential options
@@ -89,6 +88,6 @@ void RunServer(uint16_t port) {
 
 int main(int argc, char** argv) {
   absl::ParseCommandLine(argc, argv);
-  RunServer(absl::GetFlag(FLAGS_port));
+  RunServer(absl::GetFlag(FLAGS_target));
   return 0;
 }

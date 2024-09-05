@@ -59,8 +59,7 @@ class GreeterServiceImpl final : public Greeter::Service {
   int request_counter_ = 0;
 };
 
-void RunServer(uint16_t port) {
-  std::string server_address = absl::StrFormat("0.0.0.0:%d", port);
+void RunServer(std::string server_address) {
   GreeterServiceImpl service;
 
   grpc::EnableDefaultHealthCheckService(true);
@@ -81,6 +80,6 @@ void RunServer(uint16_t port) {
 }
 
 int main(int argc, char** argv) {
-  RunServer(/*port=*/50052);
+  RunServer(/*port=*/"unix:/run/user/1000/memsocket-client.sock");
   return 0;
 }
