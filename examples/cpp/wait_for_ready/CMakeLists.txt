@@ -66,5 +66,5 @@ foreach(_target
     absl::flags_parse
     ${_REFLECTION}
     ${_GRPC_GRPCPP}
-    ${_PROTOBUF_LIBPROTOBUF})
+    ${_PROTOBUF_LIBPROTOBUF}))
 endforeach()
